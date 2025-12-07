@@ -10,4 +10,5 @@ class State(BaseModel):
     clinical: Optional[str] = None
     patent : Optional[str] = None
     internal : Optional[str] = None
+    report : Optional[str] = None 
     response: Optional[str] = None

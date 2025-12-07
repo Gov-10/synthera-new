@@ -8,6 +8,7 @@ from .orchestrator_agent import orchestrator_node
 from .patent_agent import patent_node
 from .state import State 
 from .web_agent import web_node 
+from .report_agent import report_node
 
 graph = StateGraph(State)
 graph.add_node("master", master_node)
@@ -18,6 +19,7 @@ graph.add_node("iqvia", iqvia_node)
 graph.add_node("orchestrator", orchestrator_node)
 graph.add_node("patent", patent_node)
 graph.add_node("web", web_node)
+graph.add_node("report", report_node)
 
 graph.set_entry_point("master")
 graph.add_conditional_edges("master", lambda state: state.route, {"orchestrator" : "orchestrator", "internal": "internal"} )
@@ -26,6 +28,9 @@ graph.add_conditional_edges("orchestrator", lambda s: s.subtasks or [], {"iqvia"
 
 
 for agent in ["iqvia", "exim", "clinical", "web", "patent"]:
-    graph.add_edge(agent, END)
+    graph.add_edge(agent, "report")
+
+graph.add_edge("internal", "report")
+graph.add_edge("report", END)
 
 app = graph.compile()
