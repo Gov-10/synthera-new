@@ -1,21 +1,11 @@
-from langgraph.graph import StateGraph, END
 from langchain_groq import ChatGroq
 import os
-from pydantic import BaseModel
 from dotenv import load_dotenv
-from typing import Literal, Optional, List
 import json
-from .internal_agent import internal_node
-from .orchestrator_agent import orchestrator_node
+from .state import State
 load_dotenv()
 groq_key = os.getenv("GROQ_API_KEY")
 llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=groq_key)
-class State(BaseModel):
-    user_input : str 
-    route : Optional[Literal["orchestrator", "internal"]] = None 
-    subtasks : Optional[List[str]] = None 
-    response : Optional[str] = None 
-
 ALLOWED_SUBTASKS = ["iqvia", "exim", "web", "patent", "clinical"]
 
 def master_node(state: State):
@@ -89,16 +79,4 @@ Examples:
         route = "orchestrator"
     return {"route" : route, "subtasks" : subtasks}
 
-graph = StateGraph(State)
-graph.add_node("master", master_node)
-graph.add_node("orchestrator", orchestrator_node)
-graph.add_node("internal", internal_node)
-graph.set_entry_point("master")
-graph.add_edge("internal", END)
-graph.add_conditional_edges("master", lambda state: state.route, {"orchestrator" : "orchestrator", "internal" : "internal"})
-app = graph.compile()
-if __name__ == "__main__":
-    user_inp = input("enter: ")
-    final_res = app.invoke({"user_input" : user_inp})
-    print(final_res)
 

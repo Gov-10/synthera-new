@@ -1,7 +1,3 @@
-from langgraph.graphs import StateGraph, END
-from pydantic import BaseModel
-
-class State(BaseModel):
-    message: str
+from .state import State 
 def patent_node(state: State):
-    return {}
+    return {"patent" : "PATENT MODE"}

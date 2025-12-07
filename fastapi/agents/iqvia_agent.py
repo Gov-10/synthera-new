@@ -1,7 +1,3 @@
-from langgraph.graphs import StateGraph, END
-from pydantic import BaseModel
-
-class State(BaseModel):
-    message: str
+from .state import State 
 def iqvia_node(state: State):
-    return {}
+    return {"iqvia": "IQVIA MODE"}
