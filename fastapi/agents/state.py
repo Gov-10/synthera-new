@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import List, Optional
 class State(BaseModel):
+    user_email : Optional[str] = None
+    user_id: Optional[str] = None
     user_input: str
     route : Optional[str] = None
     subtasks : Optional[List[str]] = None
