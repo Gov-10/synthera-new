@@ -11,7 +11,15 @@ import os
 import json
 from dotenv import load_dotenv
 load_dotenv()
+import boto3
 
+s3 = boto3.client(
+    's3',
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.getenv("COGNITO_REGION")
+)
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
 redis_client = Redis(
     host=os.getenv("REDIS_URL"),
     port=int(os.getenv("REDIS_PORT")),
@@ -32,6 +40,15 @@ async def run_agent(payload: Query, user=Depends(get_current_user)):
         if cached:
             print("CACHE HIT: ", content_hash)
             cached_json = json.loads(cached)
+            new_url = s3.generate_presigned_url(
+                ClientMethod="get_object",
+                Params={
+                    "Bucket": S3_BUCKET_NAME,
+                    "Key": cached_json["pdf_s3_key"],
+                },
+                ExpiresIn=3600
+            )
+            cached_json["pdf_url"] = new_url
             return {"status": "success", "data" : cached_json}
         print("CACHE MISS: ", content_hash)
         result = app.invoke({"user_input": payload.user_input, "user_email" : user["email"] , "user_id" : user["sub"] })
