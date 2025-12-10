@@ -20,7 +20,7 @@ reportlab
 matplotlib
 pandas
 jinja2
-
+sqlmodel
 duckduckgo-search
 
 beautifulsoup4

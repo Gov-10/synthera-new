@@ -27,13 +27,13 @@ redis_client = Redis(
     decode_responses=True
 )
 
-class Query(BaseModel):
+class UserInput(BaseModel):
     user_input: str
 
 
 fast_app = FastAPI()
 @fast_app.post("/agent-run")
-async def run_agent(payload: Query, user=Depends(get_current_user)):
+async def run_agent(payload: UserInput, user=Depends(get_current_user)):
     try:
         content_hash = hashlib.sha256(payload.user_input.encode("utf-8")).hexdigest()
         cached = redis_client.get(content_hash)
