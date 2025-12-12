@@ -21,6 +21,9 @@ services:
       AWS_BUCKET_NAME : ${AWS_BUCKET_NAME}
       S3_BUCKET_NAME : ${S3_BUCKET_NAME}
       AWS_S3_ENDPOINT_URL : ${AWS_S3_ENDPOINT_URL}
+      REDIS_URL : ${REDIS_URL}
+      REDIS_PORT : ${REDIS_PORT}
+      REDIS_PASSWORD : ${REDIS_PASSWORD}
     depends_on:
       - rabbitmq
     restart : always

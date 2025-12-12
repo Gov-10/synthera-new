@@ -1,7 +1,12 @@
-from sqlmodel import SQLModel, Field, Relationship, Column, JSON
+from sqlmodel import SQLModel, Field, Relationship, Column, JSON, create_engine, Session
 from datetime import datetime
-from typing import List
+from typing import List, Annotated
 import uuid
+from fastapi import Depends
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 class User(SQLModel, table=True):
     email : str = Field(primary_key=True)
     created_at : datetime = Field(default_factory=datetime.utcnow)
@@ -15,5 +20,16 @@ class ChatHistory(SQLModel, table=True):
     data : dict =Field(sa_column= Column(JSON))
     timestamp: datetime = Field(default_factory= datetime.utcnow)
     sources_links:List[str] = Field(default_factory=list, sa_column= Column(JSON))
+
+NEON_URL = os.getenv("NEON_URL")
+engine = create_engine(NEON_URL, echo=True)
+def create_db_and_tables():
+    SQLModel.metadata.create_all(engine)
+
+def get_session():
+    with Session(engine) as session:
+        yield session
+
+SessionDep = Annotated[Session, Depends(get_session)]
     
 

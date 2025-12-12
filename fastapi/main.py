@@ -10,6 +10,7 @@ import hashlib
 import os
 import json
 from dotenv import load_dotenv
+from database import create_db_and_tables, ChatHistory, User, SessionDep, get_session
 load_dotenv()
 import boto3
 
@@ -33,9 +34,9 @@ class UserInput(BaseModel):
 
 fast_app = FastAPI()
 @fast_app.post("/agent-run")
-async def run_agent(payload: UserInput, user=Depends(get_current_user)):
+async def run_agent(payload: UserInput, user=Depends(get_current_user), session:SessionDep=Depends(get_session)):
     try:
-        content_hash = hashlib.sha256(payload.user_input.encode("utf-8")).hexdigest()
+        content_hash = hashlib.sha256(f"{user['sub']}::{payload.user_input}".encode()).hexdigest()
         cached = redis_client.get(content_hash)
         if cached:
             print("CACHE HIT: ", content_hash)
@@ -51,13 +52,18 @@ async def run_agent(payload: UserInput, user=Depends(get_current_user)):
             cached_json["pdf_url"] = new_url
             return {"status": "success", "data" : cached_json}
         print("CACHE MISS: ", content_hash)
+        db_user = session.get(User, user["email"])
+        if not db_user:
+            session.add(User(email=user["email"]))
+            session.commit()
         result = app.invoke({"user_input": payload.user_input, "user_email" : user["email"] , "user_id" : user["sub"] })
         send_email.delay(
             to_email=user["email"],
             subject="Your Synthera Intelligence Report",
             body=f"Your report is ready (Note: This link expires in 1 hour).\nDownload here:\n{result['pdf_url']}"
         )
-        redis_client.set(content_hash, json.dumps(result), ex=60 * 60 * 24)
+        redis_client.set(content_hash, json.dumps(result), ex=86400)
+        history = ChatHistory(user_email=user["email"], file_key=result["pdf_s3_key"], data=result, sources_links=[])
         return {"status": "success", "data": result}
     except Exception as e:
         traceback.print_exc()
