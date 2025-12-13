@@ -41,7 +41,7 @@ export default function ChatPage() {
 
     const session = await fetchAuthSession();
     const token = session.tokens?.idToken?.toString();
-
+    console.log(token);
     const res = await fetch("https://urban-broccoli-69r56vr6v7w62575w-8080.app.github.dev/agent-run", {
       method: "POST",
       headers: {

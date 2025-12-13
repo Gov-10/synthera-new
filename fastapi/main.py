@@ -16,7 +16,7 @@ import boto3
 from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 from fastapi.responses import Response
 from metrics import (REQUEST_COUNT, REQUEST_LATENCY, CACHE_HITS, CACHE_MISSES, ERROR_COUNT)
-
+from time import time
 
 s3 = boto3.client(
     's3',
