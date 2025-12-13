@@ -64,7 +64,10 @@ async def run_agent(payload: UserInput, user=Depends(get_current_user), session:
             body=f"Your report is ready (Note: This link expires in 1 hour).\nDownload here:\n{result['pdf_url']}"
         )
         redis_client.set(content_hash, json.dumps(result), ex=86400)
-        history = ChatHistory(user_email=user["email"], file_key=result["pdf_s3_key"], data=result, sources_links=[])
+        history = ChatHistory(user_email=user["email"], file_key=result["pdf_s3_key"], data=json.dumps(result), sources_links=json.dumps([]))
+        session.add(history)
+        session.commit()
+        session.refresh(history)
         return {"status": "success", "data": result}
     except Exception as e:
         traceback.print_exc()

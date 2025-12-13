@@ -13,7 +13,7 @@ s3 = boto3.client('s3',
     aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID"),
     aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY"),)
 
-
+bucket_name= os.getenv("S3_BUCKET_NAME")
 api = NinjaAPI(title="Synthera API docs")
 
 @api.post("/protected-check", auth=CustomAuth())
@@ -45,32 +45,39 @@ def get_uploaded_url(request, payload: GetSignedUrl):
     }
     return {"upload_url": presigned_url, "file_key": key}
 
+import json
+def normalize_json(value, default):
+    if value is None:
+        return default
+    if isinstance(value, (dict, list)):
+        return value
+    if isinstance(value, str):
+        return json.loads(value)
+    return default
+
 @api.get("/chat-history", response=List[ChatHistoryOut], auth=CustomAuth())
 def chat_history(request):
     user = request.auth
     user_email = user["email"]
-    chats = ChatHistory.objects.filter(user_email=user_email).order_by("-timestamp")[:50]
+    chats = (ChatHistory.objects.filter(user_email=user_email).order_by("-timestamp")[:50])
     results = []
     for entry in chats:
         file_url = s3.generate_presigned_url(
-                ClientMethod='get_object', 
-                Params = {'Bucket': bucket_name, 'Key': entry.file_key}, 
-                ExpiresIn=600
-                )
+            ClientMethod="get_object",
+            Params={
+                "Bucket": bucket_name,
+                "Key": entry.file_key,
+            },
+            ExpiresIn=600,
+        )
         results.append({
-            "timestamp" : entry.timestamp, 
-            "data" : entry.data, 
-            "file_url" : file_url, 
-            "sources_links" : entry.sources_links})
+            "id": entry.id,
+            "user_email": entry.user_email,
+            "file_key": entry.file_key,
+            "file_url": file_url,
+            "timestamp": entry.timestamp,
+            "data": normalize_json(entry.data, {}),
+            "sources_links": normalize_json(entry.sources_links, []),
+        })
+
     return results
-
-
-
-
-
-
-
-
-
-
-

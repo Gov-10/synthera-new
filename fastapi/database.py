@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field, Relationship, Column, JSON, create_engine, Session
+from sqlmodel import SQLModel, Field, Relationship, Column, JSON, create_engine, Session, Text
 from datetime import datetime
 from typing import List, Annotated, Optional
 import uuid
@@ -17,9 +17,9 @@ class ChatHistory(SQLModel, table=True):
     user_email:str = Field(foreign_key = "user.email")
     user : Optional["User"] = Relationship(back_populates="chat_history")
     file_key : str
-    data : dict =Field(sa_column= Column(JSON))
+    data : str =Field(sa_column= Column(Text))
     timestamp: datetime = Field(default_factory= datetime.utcnow)
-    sources_links:List[str] = Field(default_factory=list, sa_column= Column(JSON))
+    sources_links: str = Field(default="[]", sa_column=Column(Text))
 
 NEON_URL = os.getenv("NEON_URL")
 engine = create_engine(NEON_URL, echo=True)
