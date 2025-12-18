@@ -18,7 +18,7 @@ This system is designed as a **secure, scalable, and agent-driven architecture**
 4. Task Broker : GCP Pub/Sub
 5. Caching : Redis Cloud
 6. Authentication : Amazon Cognito
-7. AI Agent Layer : Strands Framework
+7. Agentic system framework : LangGraph 
 8. Containerization : Docker
 9. Deployments : GCP Cloud Run, Vercel
 10. File storage : Amazon S3
