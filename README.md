@@ -20,7 +20,7 @@ This system is designed as a **secure, scalable, and agent-driven architecture**
 6. Authentication : Amazon Cognito
 7. Agentic system framework : LangGraph 
 8. Containerization : Docker
-9. Deployments : GCP Cloud Run, Vercel
+9. Deployments : GCP Cloud Run, Vercel, Amazon EC2
 10. File storage : Amazon S3
 11. Email Service : Amazon SES
 12. Task runner: Celery
