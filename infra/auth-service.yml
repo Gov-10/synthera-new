@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  labels:
+    app: auth-app
+spec:
+  selector:
+    app: auth-app
+  ports:
+    - name: http
+      port: 4000
+      targetPort: 4000
+  type: LoadBalancer
+    
