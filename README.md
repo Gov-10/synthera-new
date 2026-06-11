@@ -7,7 +7,8 @@ This project is currently being revamped. Changes:
 # CURRENT-STATUS
 1. Dedicated custom auth service done
 2. Architecture modified (click on the below eraser.io link to view)
-3. Django service purged 
+3. Django service purged
+4. Upload service done 
    
 # System Architecture
 <img width="1030" height="320" alt="image" src="https://github.com/user-attachments/assets/aeedde05-9adf-4065-ab82-d95b30981a0e" />
