@@ -41,7 +41,7 @@ FastAPIInstrumentor.instrument_app(app)
 tracer = trace.get_tracer(__name__)
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger("auth")
-POD_NAME=os.getenv("POD_NAME")
+POD_NAME=os.getenv("HOSTNAME")
 
 def get_db():
     db=sessionLocal()

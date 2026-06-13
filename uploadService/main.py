@@ -33,7 +33,7 @@ provider.add_span_processor(
 )
 FastAPIInstrumentor.instrument_app(app)
 tracer = trace.get_tracer(__name__)
-POD_NAME=os.getenv("POD_NAME")
+POD_NAME=os.getenv("HOSTNAME")
 
 def get_db():
     db=sessionLocal()

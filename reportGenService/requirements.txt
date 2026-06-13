@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+boto3
+sqlalchemy
+python-dotenv
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-exporter-otlp
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-sqlalchemy
