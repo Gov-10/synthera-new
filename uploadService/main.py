@@ -60,6 +60,7 @@ def uplod(payload: UploadSchema,request: Request,  db:Session=Depends(get_db)):
         raise HTTPException(status_code=401, detail="invalid token format")
     pay=jwt.decode(token, "supersecret", algorithm="HS256")
     username=pay["sub"]
+    job_id=str(uuid.uuid4())
     file_id=str(uuid.uuid4())
     key=f"docs/{file_id}-{username}-{payload.file_name}"
     pres=s3.generate_presigned_url(
@@ -84,15 +85,18 @@ def uplod(payload: UploadSchema,request: Request,  db:Session=Depends(get_db)):
     db.refresh(db_note)
     FILE_UPLOADED.inc()
     try:
-        resp=requests.post("http://bff-service/fileinfo", json={"username": username, "file_key": key}, timeout=5)
+        resp=requests.post("http://bff-service/fileinfo", json={"username": username, "file_key": key, "job_id": job_id}, timeout=5)
         resp.raise_for_status()
     except Exception as e:
         logger.error(json.dumps({"event": "bff_service_error", "error": str(e)}))
-    return {"presigned_url": pres, "file_key": key}
+    return {"presigned_url": pres, "file_key": key, "job_id": job_id}
 
 @app.post("/getfiles")
 def getfi(request: Request, db:Session=Depends(get_db)):
     token= request.headers["Authorization"]
+    if not token:
+        logger.warning(json.dumps({"event": "token_not_found"}))
+        raise HTTPException(status_code=401, detail="no token found")
     schema, token=token.split()
     if schema.lower() != "bearer":
         logger.warning(json.dumps({"event": "invalid_token_format"}))
