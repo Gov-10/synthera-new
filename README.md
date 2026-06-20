@@ -3,18 +3,13 @@
 This project is currently being revamped. Changes:
 1. Migration to individual worker services from a single langGraph worker.
 2. Migration to Kubernetes based infra
+3. Aggressive caching for cost optimization
 
-# CURRENT-STATUS
-1. Dedicated custom auth service done
-2. Architecture modified (click on the below eraser.io link to view)
-3. Django service purged
-4. Upload service done 
+# Revamped Architecture
+![System Architecture](./docs/arc.png)
    
 # System Architecture
 <img width="1030" height="320" alt="image" src="https://github.com/user-attachments/assets/aeedde05-9adf-4065-ab82-d95b30981a0e" />
-
-This system is designed as a **secure, scalable, and agent-driven architecture** for authenticated data processing, intelligent task orchestration, report generation, and user notifications. The architecture follows a **loosely coupled, event-driven design** to ensure reliability and extensibility.
-
 
  # High-Level Architecture Diagram
 
