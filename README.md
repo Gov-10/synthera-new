@@ -27,6 +27,10 @@ This project is currently being revamped. Changes:
 11. Email Service : Amazon SES
 12. Task runner: Celery
 
+# Pending tasks (revamp)
+1. Adding k8s config yml files for K8s deployment
+2. Shared redis state improvement
+
 #  Key Architectural Benefits
 
 * Scalable – Event-driven architecture supports horizontal scaling.
